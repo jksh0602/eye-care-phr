@@ -1353,6 +1353,7 @@ textarea.form-input {
 /* 페이지별 body 조정 */
 body:has(#page-login.active) { padding-bottom: 0; }
 body:has(#page-register.active) { padding-bottom: 0; }
+body:has(#page-consent.active) { padding-bottom: 0; }
 body:has(#page-welcome.active) { padding-bottom: 0; }
 body:has(#page-selfDiagnosis.active) { padding-bottom: 0; }
 body:has(#page-setupComplete.active) { padding-bottom: 0; }

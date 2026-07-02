@@ -231,20 +231,17 @@ function login(event) {
     const users = DB.getUsers();
     const user = users[id];
     
-    if (!user) {
-        flash('존재하지 않는 계정입니다. 회원가입 해주세요.', 'error');
-        return false;
-    }
-    
-    if (user.password !== pw) {
-        flash('비밀번호가 올바르지 않습니다.', 'error');
+    if (!user || user.password !== pw) {
+        flash('아이디 또는 비밀번호가 올바르지 않습니다.', 'error');
         return false;
     }
     
     DB.set('currentUser', id);
     flash('로그인되었습니다.', 'success');
     
-    if (!user.onboardingComplete) {
+    if (!user.consents) {
+        showPage('consent');
+    } else if (!user.onboardingComplete) {
         showPage('welcome');
     } else {
         showPage('main');
@@ -261,33 +258,44 @@ function register(event) {
     
     if (!id || !pw) { flash('아이디와 비밀번호를 입력해주세요.', 'error'); return false; }
     
-    const required = document.querySelectorAll('#registerForm .consent-required');
-    for (let cb of required) {
-        if (!cb.checked) { flash('필수 약관에 모두 동의해주세요.', 'error'); return false; }
-    }
-    
     const users = DB.getUsers();
     if (users[id]) { flash('이미 사용중인 아이디입니다.', 'error'); return false; }
     
-    const consents = {};
-    document.querySelectorAll('#registerForm .consent-cb').forEach(cb => {
-        consents[cb.dataset.key] = cb.checked ? 1 : 0;
-    });
-    
-    const userData = {
+    DB.saveUser(id, {
         password: pw,
         name: name || id,
         email: email || '',
         createdAt: new Date().toISOString(),
         onboardingComplete: false,
-        consents: consents,
+        consents: null,
         settings: { riskGroup: 'normal', notificationFreq: 'monthly', videoConsent: false, notificationEnabled: true, adEnabled: true },
         riskGroup: 'normal'
-    };
+    });
     
-    DB.saveUser(id, userData);
     DB.set('currentUser', id);
-    flash('회원가입이 완료되었습니다!', 'success');
+    flash('기본 정보 입력이 완료되었습니다. 약관 동의를 진행해주세요.', 'success');
+    showPage('consent');
+    return false;
+}
+
+function submitConsent(event) {
+    event.preventDefault();
+    const user = DB.getCurrentUser();
+    if (!user) return false;
+    
+    const required = document.querySelectorAll('#consentForm .consent-cb[data-required]');
+    for (let cb of required) {
+        if (!cb.checked) { flash('필수 약관에 모두 동의해주세요.', 'error'); return false; }
+    }
+    
+    const consents = {};
+    document.querySelectorAll('#consentForm .consent-cb').forEach(cb => {
+        consents[cb.dataset.key] = cb.checked ? 1 : 0;
+    });
+    
+    user.consents = consents;
+    DB.saveUser(user.id, user);
+    flash('약관 동의가 완료되었습니다!', 'success');
     showPage('welcome');
     return false;
 }
@@ -1014,7 +1022,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // 로그인 상태 확인
     const user = DB.getCurrentUser();
     if (user) {
-        if (!user.onboardingComplete) {
+        if (!user.consents) {
+            showPage('consent');
+        } else if (!user.onboardingComplete) {
             showPage('welcome');
         } else {
             showPage('main');

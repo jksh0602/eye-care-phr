@@ -12,7 +12,6 @@
     <div id="flashContainer" class="flash-container"></div>
 
     <!-- ==================== AUTH PAGES ==================== -->
-
     <!-- 로그인 -->
     <div id="page-login" class="page auth-page">
         <div class="auth-header">
@@ -38,12 +37,12 @@
         </div>
     </div>
 
-    <!-- 회원가입 + 약관동의 -->
+    <!-- 회원가입 (기본정보만) -->
     <div id="page-register" class="page auth-page" style="display:none;">
         <div class="auth-header">
             <div class="auth-icon">✨</div>
             <h1>회원가입</h1>
-            <p>눈 건강 관리를 시작해볼까요?</p>
+            <p>기본 정보를 입력해주세요</p>
         </div>
         <div class="auth-body">
             <form id="registerForm" onsubmit="return register(event)">
@@ -63,26 +62,41 @@
                     <label class="form-label">이메일</label>
                     <input type="email" id="regEmail" class="form-input" placeholder="이메일">
                 </div>
-                <div class="divider"></div>
-                <h4 class="font-bold mb-2">약관 동의</h4>
-                <div class="checkbox-group">
-                    <div class="checkbox-item agree-all-item" onclick="toggleAllConsents()">
-                        <input type="checkbox" id="agreeAll">
-                        <span class="checkbox-text font-bold">전체 동의하기</span>
-                    </div>
-                    <div class="checkbox-item"><input type="checkbox" class="consent-cb consent-required" data-key="service_terms" checked><span class="checkbox-text">서비스 이용약관 동의</span><span class="badge-required">필수</span></div>
-                    <div class="checkbox-item"><input type="checkbox" class="consent-cb consent-required" data-key="privacy_collection" checked><span class="checkbox-text">개인정보 수집 및 이용 동의</span><span class="badge-required">필수</span></div>
-                    <div class="checkbox-item"><input type="checkbox" class="consent-cb consent-required" data-key="third_party_sharing" checked><span class="checkbox-text">개인정보 제3자 제공 동의</span><span class="badge-required">필수</span></div>
-                    <div class="checkbox-item"><input type="checkbox" class="consent-cb consent-required" data-key="data_storage" checked><span class="checkbox-text">정보 저장 동의</span><span class="badge-required">필수</span></div>
-                    <div class="checkbox-item"><input type="checkbox" class="consent-cb consent-required" data-key="camera_access" checked><span class="checkbox-text">카메라 접근 권한 동의</span><span class="badge-required">필수</span></div>
-                    <div class="checkbox-item"><input type="checkbox" class="consent-cb consent-required" data-key="notification" checked><span class="checkbox-text">알림 동의</span><span class="badge-required">필수</span></div>
-                    <div class="checkbox-item"><input type="checkbox" class="consent-cb consent-required" data-key="anonymized_data" checked><span class="checkbox-text">비식별 데이터 활용 동의</span><span class="badge-required">필수</span></div>
-                    <div class="checkbox-item"><input type="checkbox" class="consent-cb" data-key="marketing_optin"><span class="checkbox-text">마케팅 정보 수신 동의</span><span class="badge-optional">선택</span></div>
-                </div>
-                <button type="submit" class="btn btn-primary mt-4">가입하기</button>
+                <button type="submit" class="btn btn-primary mt-4">다음</button>
             </form>
             <div class="auth-footer mt-3">
                 이미 계정이 있으신가요? <a href="#" onclick="showPage('login')">로그인</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 약관동의 -->
+    <div id="page-consent" class="page auth-page" style="display:none;">
+        <div class="auth-header">
+            <div class="auth-icon">📝</div>
+            <h1>약관 동의</h1>
+            <p>서비스 이용을 위해 약관에 동의해주세요</p>
+        </div>
+        <div class="auth-body">
+            <form id="consentForm" onsubmit="return submitConsent(event)">
+                <div class="checkbox-group">
+                    <div class="checkbox-item" onclick="document.getElementById('agreeAll').click()">
+                        <input type="checkbox" id="agreeAll" onchange="document.querySelectorAll('#consentForm .consent-cb').forEach(c=>{if(!c.dataset.required)c.checked=this.checked})">
+                        <span class="checkbox-text font-bold">전체 동의하기</span>
+                    </div>
+                    <div class="checkbox-item"><input type="checkbox" class="consent-cb" data-key="service_terms" data-required="1" checked><span class="checkbox-text">서비스 이용약관 동의</span><span class="badge-required">필수</span></div>
+                    <div class="checkbox-item"><input type="checkbox" class="consent-cb" data-key="privacy_collection" data-required="1" checked><span class="checkbox-text">개인정보 수집 및 이용 동의</span><span class="badge-required">필수</span></div>
+                    <div class="checkbox-item"><input type="checkbox" class="consent-cb" data-key="third_party_sharing" data-required="1" checked><span class="checkbox-text">개인정보 제3자 제공 동의</span><span class="badge-required">필수</span></div>
+                    <div class="checkbox-item"><input type="checkbox" class="consent-cb" data-key="data_storage" data-required="1" checked><span class="checkbox-text">정보 저장 동의</span><span class="badge-required">필수</span></div>
+                    <div class="checkbox-item"><input type="checkbox" class="consent-cb" data-key="camera_access" data-required="1" checked><span class="checkbox-text">카메라 접근 권한 동의</span><span class="badge-required">필수</span></div>
+                    <div class="checkbox-item"><input type="checkbox" class="consent-cb" data-key="notification" data-required="1" checked><span class="checkbox-text">알림 동의</span><span class="badge-required">필수</span></div>
+                    <div class="checkbox-item"><input type="checkbox" class="consent-cb" data-key="anonymized_data" data-required="1" checked><span class="checkbox-text">비식별 데이터 활용 동의</span><span class="badge-required">필수</span></div>
+                    <div class="checkbox-item"><input type="checkbox" class="consent-cb" data-key="marketing_optin"><span class="checkbox-text">마케팅 정보 수신 동의</span><span class="badge-optional">선택</span></div>
+                </div>
+                <button type="submit" class="btn btn-primary mt-4">동의하고 시작하기</button>
+            </form>
+            <div class="auth-footer mt-3">
+                <a href="#" onclick="showPage('login')">처음으로</a>
             </div>
         </div>
     </div>
