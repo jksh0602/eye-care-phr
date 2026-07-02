@@ -13,7 +13,7 @@
 
     <!-- ==================== AUTH PAGES ==================== -->
 
-    <!-- Login -->
+    <!-- Login (로그인만) -->
     <div id="page-login" class="page auth-page">
         <div class="auth-header">
             <div class="auth-icon">👁️</div>
@@ -24,50 +24,26 @@
             <form id="loginForm" onsubmit="return login(event)">
                 <div class="form-group">
                     <label class="form-label">아이디</label>
-                    <input type="text" id="loginId" class="form-input" placeholder="아이디를 입력하세요" required>
+                    <input type="text" id="loginId" class="form-input" placeholder="아이디를 입력하세요" required autocomplete="username">
                 </div>
                 <div class="form-group">
                     <label class="form-label">비밀번호</label>
-                    <input type="password" id="loginPw" class="form-input" placeholder="비밀번호를 입력하세요" required>
+                    <input type="password" id="loginPw" class="form-input" placeholder="비밀번호를 입력하세요" required autocomplete="current-password">
                 </div>
                 <button type="submit" class="btn btn-primary mt-4">로그인</button>
             </form>
-            <div class="auth-footer mt-4">
-                아직 계정이 없으신가요? <a href="#" onclick="showPage('register')">회원가입</a>
-            </div>
         </div>
     </div>
 
-    <!-- Register -->
-    <div id="page-register" class="page auth-page" style="display:none;">
+    <!-- 동의 창 (로그인 후 첫 진입시) -->
+    <div id="page-consent" class="page auth-page" style="display:none;">
         <div class="auth-header">
-            <div class="auth-icon">✨</div>
-            <h1>회원가입</h1>
-            <p>눈 건강 관리를 시작해볼까요?</p>
+            <div class="auth-icon">📝</div>
+            <h1>약관 동의</h1>
+            <p>서비스 이용을 위해 약관에 동의해주세요</p>
         </div>
         <div class="auth-body">
-            <form id="registerForm" onsubmit="return register(event)">
-                <h3 class="font-bold mb-3">기본 정보</h3>
-                <div class="form-group">
-                    <label class="form-label">아이디 *</label>
-                    <input type="text" id="regId" class="form-input" placeholder="아이디" required>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">비밀번호 *</label>
-                    <input type="password" id="regPw" class="form-input" placeholder="비밀번호" required>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">이름</label>
-                    <input type="text" id="regName" class="form-input" placeholder="이름">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">이메일</label>
-                    <input type="email" id="regEmail" class="form-input" placeholder="이메일">
-                </div>
-
-                <div class="divider"></div>
-                <h3 class="font-bold mb-3">약관 동의</h3>
-
+            <form id="consentForm" onsubmit="return submitConsent(event)">
                 <div class="checkbox-group">
                     <div class="checkbox-item agree-all-item" onclick="toggleAllConsents()">
                         <input type="checkbox" id="agreeAll">
@@ -82,12 +58,8 @@
                     <div class="checkbox-item"><input type="checkbox" class="consent-cb consent-required" data-key="anonymized_data" checked><span class="checkbox-text">비식별 데이터 활용 동의</span><span class="badge-required">필수</span></div>
                     <div class="checkbox-item"><input type="checkbox" class="consent-cb" data-key="marketing_optin"><span class="checkbox-text">마케팅 정보 수신 동의</span><span class="badge-optional">선택</span></div>
                 </div>
-
-                <button type="submit" class="btn btn-primary mt-4">회원가입 완료</button>
+                <button type="submit" class="btn btn-primary mt-4">동의하고 시작하기</button>
             </form>
-            <div class="auth-footer mt-3">
-                이미 계정이 있으신가요? <a href="#" onclick="showPage('login')">로그인</a>
-            </div>
         </div>
     </div>
 

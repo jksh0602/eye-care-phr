@@ -226,16 +226,63 @@ function login(event) {
     const id = document.getElementById('loginId').value.trim();
     const pw = document.getElementById('loginPw').value;
     
-    const users = DB.getUsers();
-    const user = users[id];
+    if (!id || !pw) { flash('아이디와 비밀번호를 입력해주세요.', 'error'); return false; }
     
-    if (!user || user.password !== pw) {
-        flash('아이디 또는 비밀번호가 올바르지 않습니다.', 'error');
+    const users = DB.getUsers();
+    let user = users[id];
+    
+    if (!user) {
+        // 첫 로그인 = 자동 회원가입
+        const userData = {
+            password: pw,
+            name: id,
+            email: '',
+            createdAt: new Date().toISOString(),
+            onboardingComplete: false,
+            consents: null, // 아직 동의 안함
+            settings: { riskGroup: 'normal', notificationFreq: 'monthly', videoConsent: false, notificationEnabled: true, adEnabled: true },
+            riskGroup: 'normal'
+        };
+        DB.saveUser(id, userData);
+        user = DB.getUsers()[id];
+        flash('새 계정이 생성되었습니다.', 'info');
+    } else if (user.password !== pw) {
+        flash('비밀번호가 올바르지 않습니다.', 'error');
         return false;
     }
     
     DB.set('currentUser', id);
     flash('로그인되었습니다.', 'success');
+    
+    // 동의 안했으면 동의창 먼저
+    if (!user.consents) {
+        showPage('consent');
+    } else if (!user.onboardingComplete) {
+        showPage('welcome');
+    } else {
+        showPage('main');
+    }
+    return false;
+}
+
+function submitConsent(event) {
+    event.preventDefault();
+    const user = DB.getCurrentUser();
+    if (!user) return false;
+    
+    const required = document.querySelectorAll('#consentForm .consent-required');
+    for (let cb of required) {
+        if (!cb.checked) { flash('필수 약관에 모두 동의해주세요.', 'error'); return false; }
+    }
+    
+    const consents = {};
+    document.querySelectorAll('#consentForm .consent-cb').forEach(cb => {
+        consents[cb.dataset.key] = cb.checked ? 1 : 0;
+    });
+    
+    user.consents = consents;
+    DB.saveUser(user.id, user);
+    flash('약관 동의가 완료되었습니다.', 'success');
     
     if (!user.onboardingComplete) showPage('welcome');
     else showPage('main');
@@ -682,12 +729,12 @@ function renderMyPage() {
             <div class="card-header"><span class="card-title">💎 구독 정보</span><a href="#" class="text-sm" onclick="showPage('subscription')">관리</a></div>
             <div class="card-body">${activeSub ? `<div class="info-row"><span class="info-label">상태</span><span class="info-value" style="color:var(--secondary);">구독중 ✓</span></div><div class="info-row"><span class="info-label">시작일</span><span class="info-value">${activeSub.startDate}</span></div>` : '<p class="text-muted text-sm">구독하지 않은 상태입니다.</p><a href="#" class="btn btn-accent btn-sm mt-2" style="width:auto;display:inline-block;" onclick="showPage(\'subscription\')">💎 구독하기 (1,900원)</a>'}</div>
         </div>
-        <div class="card">
+        ${Object.keys(consents).length ? `<div class="card">
             <div class="card-header"><span class="card-title">📄 동의 현황</span></div>
             <div class="card-body">
                 ${Object.entries(consents).map(([k, v]) => `<div class="info-row"><span class="info-label">${consentLabel(k)}</span><span class="info-value">${v ? '✅' : '❌'}</span></div>`).join('')}
             </div>
-        </div>
+        </div>` : ''}
         <div class="card">
             <div class="card-header"><span class="card-title">📊 자가진단 히스토리</span></div>
             <div class="card-body">${diagnoses.length ? diagnoses.slice(-10).reverse().map(d => `
@@ -964,7 +1011,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // 로그인 상태 확인
     const user = DB.getCurrentUser();
     if (user) {
-        if (!user.onboardingComplete) {
+        if (!user.consents) {
+            showPage('consent');
+        } else if (!user.onboardingComplete) {
             showPage('welcome');
         } else {
             showPage('main');
