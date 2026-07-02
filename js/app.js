@@ -272,9 +272,13 @@ function register(event) {
         riskGroup: 'normal'
     });
     
-    DB.set('currentUser', id);
-    flash('기본 정보 입력이 완료되었습니다. 약관 동의를 진행해주세요.', 'success');
-    showPage('consent');
+    document.getElementById('regId').value = '';
+    document.getElementById('regPw').value = '';
+    document.getElementById('regName').value = '';
+    document.getElementById('regEmail').value = '';
+    
+    flash('회원가입이 완료되었습니다. 로그인해주세요.', 'success');
+    showPage('login');
     return false;
 }
 
