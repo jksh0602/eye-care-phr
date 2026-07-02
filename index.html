@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>아이케어 PHR - 눈 건강 관리</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <!-- Flash Messages -->
+    <div id="flashContainer" class="flash-container"></div>
+
+    <!-- ==================== AUTH PAGES ==================== -->
+
+    <!-- Login -->
+    <div id="page-login" class="page auth-page">
+        <div class="auth-header">
+            <div class="auth-icon">👁️</div>
+            <h1>아이케어 PHR</h1>
+            <p>당신의 눈 건강을 스마트하게 관리하세요</p>
+        </div>
+        <div class="auth-body">
+            <form id="loginForm" onsubmit="return login(event)">
+                <div class="form-group">
+                    <label class="form-label">아이디</label>
+                    <input type="text" id="loginId" class="form-input" placeholder="아이디를 입력하세요" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">비밀번호</label>
+                    <input type="password" id="loginPw" class="form-input" placeholder="비밀번호를 입력하세요" required>
+                </div>
+                <button type="submit" class="btn btn-primary mt-4">로그인</button>
+            </form>
+            <div class="auth-footer mt-4">
+                아직 계정이 없으신가요? <a href="#" onclick="showPage('register')">회원가입</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Register -->
+    <div id="page-register" class="page auth-page" style="display:none;">
+        <div class="auth-header">
+            <div class="auth-icon">✨</div>
+            <h1>회원가입</h1>
+            <p>눈 건강 관리를 시작해볼까요?</p>
+        </div>
+        <div class="auth-body">
+            <form id="registerForm" onsubmit="return register(event)">
+                <h3 class="font-bold mb-3">기본 정보</h3>
+                <div class="form-group">
+                    <label class="form-label">아이디 *</label>
+                    <input type="text" id="regId" class="form-input" placeholder="아이디" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">비밀번호 *</label>
+                    <input type="password" id="regPw" class="form-input" placeholder="비밀번호" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">이름</label>
+                    <input type="text" id="regName" class="form-input" placeholder="이름">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">이메일</label>
+                    <input type="email" id="regEmail" class="form-input" placeholder="이메일">
+                </div>
+
+                <div class="divider"></div>
+                <h3 class="font-bold mb-3">약관 동의</h3>
+
+                <div class="checkbox-group">
+                    <div class="checkbox-item agree-all-item" onclick="toggleAllConsents()">
+                        <input type="checkbox" id="agreeAll">
+                        <span class="checkbox-text font-bold">전체 동의하기</span>
+                    </div>
+                    <div class="checkbox-item"><input type="checkbox" class="consent-cb consent-required" data-key="service_terms" checked><span class="checkbox-text">서비스 이용약관 동의</span><span class="badge-required">필수</span></div>
+                    <div class="checkbox-item"><input type="checkbox" class="consent-cb consent-required" data-key="privacy_collection" checked><span class="checkbox-text">개인정보 수집 및 이용 동의</span><span class="badge-required">필수</span></div>
+                    <div class="checkbox-item"><input type="checkbox" class="consent-cb consent-required" data-key="third_party_sharing" checked><span class="checkbox-text">개인정보 제3자 제공 동의</span><span class="badge-required">필수</span></div>
+                    <div class="checkbox-item"><input type="checkbox" class="consent-cb consent-required" data-key="data_storage" checked><span class="checkbox-text">정보 저장 동의</span><span class="badge-required">필수</span></div>
+                    <div class="checkbox-item"><input type="checkbox" class="consent-cb consent-required" data-key="camera_access" checked><span class="checkbox-text">카메라 접근 권한 동의</span><span class="badge-required">필수</span></div>
+                    <div class="checkbox-item"><input type="checkbox" class="consent-cb consent-required" data-key="notification" checked><span class="checkbox-text">알림 동의</span><span class="badge-required">필수</span></div>
+                    <div class="checkbox-item"><input type="checkbox" class="consent-cb consent-required" data-key="anonymized_data" checked><span class="checkbox-text">비식별 데이터 활용 동의</span><span class="badge-required">필수</span></div>
+                    <div class="checkbox-item"><input type="checkbox" class="consent-cb" data-key="marketing_optin"><span class="checkbox-text">마케팅 정보 수신 동의</span><span class="badge-optional">선택</span></div>
+                </div>
+
+                <button type="submit" class="btn btn-primary mt-4">회원가입 완료</button>
+            </form>
+            <div class="auth-footer mt-3">
+                이미 계정이 있으신가요? <a href="#" onclick="showPage('login')">로그인</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== ONBOARDING ==================== -->
+
+    <!-- Welcome -->
+    <div id="page-welcome" class="page" style="display:none;">
+        <div class="onboarding-page">
+            <div class="onboarding-header" style="padding-top:60px;">
+                <div class="step-icon">👁️</div>
+                <h1>환영합니다! 👋</h1>
+                <p>눈 건강 관리를 위해<br>첫 자가진단을 시작해볼까요?</p>
+            </div>
+            <div class="onboarding-body">
+                <div class="card">
+                    <h3 class="font-bold mb-3">3단계로 시작하기</h3>
+                    <div class="info-row"><span class="info-label">1️⃣</span><span class="info-value flex-1">자가진단 설문 작성</span></div>
+                    <div class="info-row"><span class="info-label">2️⃣</span><span class="info-value flex-1">위험군별 맞춤 설정</span></div>
+                    <div class="info-row"><span class="info-label">3️⃣</span><span class="info-value flex-1">대시보드에서 관리 시작</span></div>
+                </div>
+                <div class="card" style="background:var(--primary-light);">
+                    <p class="text-sm text-muted text-center">※ 자가진단은 약 3분 정도 소요되며,<br>응답에 따라 맞춤형 관리가 제공됩니다.</p>
+                </div>
+            </div>
+            <div class="onboarding-footer" style="padding:16px 24px 32px;">
+                <button class="btn btn-primary btn-lg" onclick="showPage('selfDiagnosis')">자가진단 시작하기 →</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Self Diagnosis -->
+    <div id="page-selfDiagnosis" class="page" style="display:none;">
+        <div class="onboarding-page">
+            <div class="progress-bar"><span class="progress-step active"></span><span class="progress-step"></span><span class="progress-step"></span></div>
+            <div class="onboarding-header">
+                <div class="step-icon">📋</div>
+                <h1>초기 자가진단</h1>
+                <p>아래 문항에 답변해주세요. (약 3분 소요)</p>
+            </div>
+            <div class="onboarding-body">
+                <form id="diagnosisForm" onsubmit="return submitDiagnosis(event)">
+                    <div id="diagnosisQuestions"></div>
+                    <button type="submit" class="btn btn-primary btn-lg mt-4">결과 확인하기</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Setup Complete -->
+    <div id="page-setupComplete" class="page" style="display:none;">
+        <div class="onboarding-page">
+            <div class="progress-bar"><span class="progress-step completed"></span><span class="progress-step completed"></span><span class="progress-step active"></span></div>
+            <div class="onboarding-header">
+                <div class="step-icon">🎉</div>
+                <h1>맞춤 설정</h1>
+                <p>당신의 눈 건강 상태에 맞게 설정을 완료해주세요.</p>
+            </div>
+            <div class="onboarding-body">
+                <div id="setupResult" class="card text-center"></div>
+                <div class="card">
+                    <h3 class="font-bold mb-3">📋 맞춤 알림 설정</h3>
+                    <div id="setupInfo" class="info-row"><span class="info-label">자가진단 주기</span><span class="info-value" id="setupFreq"></span></div>
+                </div>
+                <div class="card">
+                    <h3 class="font-bold mb-3">📹 영상 시청 중 측정 동의</h3>
+                    <p class="text-sm text-muted mb-3">앱으로 영상 시청 중 눈 깜빡임 등을 측정하는 것에 동의하십니까?</p>
+                    <div class="toggle-group">
+                        <div><div class="toggle-label">영상 시청 중 측정</div><div class="toggle-desc">시청 중 눈 건강 데이터 측정</div></div>
+                        <label class="toggle-switch"><input type="checkbox" id="videoConsent" checked><span class="toggle-slider"></span></label>
+                    </div>
+                    <p class="text-xs text-muted mt-2">※ 실제 측정 기능은 제공되지 않으며, 동의 여부만 저장됩니다.</p>
+                    <p class="text-xs text-muted">※ 거절 시 자가진단과 알림만 제공됩니다.</p>
+                </div>
+                <button class="btn btn-primary btn-lg" onclick="completeSetup()">설정 완료</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== MAIN APP (탭) ==================== -->
+
+    <div id="page-main" class="page" style="display:none;">
+        <!-- 플래시 메시지용 인페이지 -->
+        <div id="mainFlash" class="flash-container" style="position:static;"></div>
+
+        <!-- 홈 -->
+        <div id="tab-home" class="tab-content active-tab">
+            <div class="page-header">
+                <div><h1 id="greeting"></h1><span class="subtitle" id="todayDate"></span></div>
+                <div><span class="risk-badge" id="headerRiskBadge"></span></div>
+            </div>
+            <div class="card fatigue-score-card">
+                <div class="score-desc">눈 피로도 점수</div>
+                <div class="score-value" id="fatigueScoreDisplay">0</div>
+                <div class="score-desc" id="fatigueDesc">측정 데이터가 없습니다</div>
+            </div>
+            <div class="widget-grid" id="widgetGrid"></div>
+            <div class="card">
+                <div class="card-header"><span class="card-title">📈 피로도 추이</span></div>
+                <div class="card-body"><canvas id="fatigueChart" width="400" height="200"></canvas></div>
+            </div>
+            <div class="card">
+                <div class="card-header"><span class="card-title">🎯 내 맞춤관리</span><a href="#" onclick="switchTab('settings')" class="text-sm">관리</a></div>
+                <div class="card-body" id="customItems"></div>
+            </div>
+            <div class="flex gap-2 mt-4">
+                <button class="btn btn-primary flex-1" onclick="switchTab('diagnosis')">📋 자가진단 하기</button>
+                <button class="btn btn-secondary flex-1" onclick="switchTab('measure')">📹 측정하기</button>
+            </div>
+        </div>
+
+        <!-- 고민상담 -->
+        <div id="tab-consultation" class="tab-content" style="display:none;">
+            <div class="page-header"><h1>💬 고민상담</h1><button class="btn btn-primary btn-sm" onclick="showConsultForm()">✏️ 글쓰기</button></div>
+            <div id="consultList"></div>
+        </div>
+
+        <!-- 쇼핑 -->
+        <div id="tab-shopping" class="tab-content" style="display:none;">
+            <div class="page-header"><h1>🛍️ 제휴 쇼핑</h1></div>
+            <div class="category-tabs" id="shopCategories"></div>
+            <div class="product-grid" id="productGrid"></div>
+        </div>
+
+        <!-- 맞춤관리 -->
+        <div id="tab-settings" class="tab-content" style="display:none;">
+            <div class="page-header"><h1>⚙️ 맞춤관리</h1></div>
+            <div id="settingsContent"></div>
+        </div>
+
+        <!-- 마이페이지 -->
+        <div id="tab-mypage" class="tab-content" style="display:none;">
+            <div class="page-header"><h1>👤 마이페이지</h1></div>
+            <div id="myPageContent"></div>
+        </div>
+
+        <!-- 하단 탭 내비게이션 -->
+        <nav class="bottom-tabs">
+            <a href="#" class="tab-item active" data-tab="home" onclick="switchTab('home')"><span class="tab-icon">🏠</span><span class="tab-label">홈</span></a>
+            <a href="#" class="tab-item" data-tab="consultation" onclick="switchTab('consultation')"><span class="tab-icon">💬</span><span class="tab-label">고민상담</span></a>
+            <a href="#" class="tab-item" data-tab="shopping" onclick="switchTab('shopping')"><span class="tab-icon">🛍️</span><span class="tab-label">쇼핑</span></a>
+            <a href="#" class="tab-item" data-tab="settings" onclick="switchTab('settings')"><span class="tab-icon">⚙️</span><span class="tab-label">맞춤관리</span></a>
+            <a href="#" class="tab-item" data-tab="mypage" onclick="switchTab('mypage')"><span class="tab-icon">👤</span><span class="tab-label">마이페이지</span></a>
+        </nav>
+    </div>
+
+    <!-- ==================== SUB PAGES ==================== -->
+
+    <!-- Consultation Form -->
+    <div id="page-consultForm" class="page" style="display:none;">
+        <div class="page-header"><h1>✏️ 새 상담글</h1><button class="btn btn-secondary btn-sm" onclick="backToConsult()">← 목록</button></div>
+        <div class="card">
+            <div class="form-group"><label class="form-label">카테고리</label><select id="consultCategory" class="form-select"><option value="general">일반</option><option value="eye_doctor">안과</option><option value="optician">안경</option><option value="lens">렌즈</option></select></div>
+            <div class="form-group"><label class="form-label">제목</label><input type="text" id="consultTitle" class="form-input" placeholder="제목을 입력하세요" required></div>
+            <div class="form-group"><label class="form-label">내용</label><textarea id="consultContent" class="form-input" placeholder="안과 의사, 안경사, 렌즈 전문가가 답변을 드립니다." required></textarea></div>
+        </div>
+        <button class="btn btn-primary" onclick="submitConsult()">등록하기</button>
+    </div>
+
+    <!-- Consultation Detail -->
+    <div id="page-consultDetail" class="page" style="display:none;">
+        <div class="page-header"><h1>💬 상담 상세</h1><button class="btn btn-secondary btn-sm" onclick="backToConsult()">← 목록</button></div>
+        <div id="consultDetailContent"></div>
+    </div>
+
+    <!-- 정기 자가진단 -->
+    <div id="page-regularDiagnosis" class="page" style="display:none;">
+        <div class="page-header"><h1>📋 정기 자가진단</h1><span class="subtitle">최근 상태를 체크해보세요</span></div>
+        <form id="regularDiagForm" onsubmit="return submitRegularDiagnosis(event)">
+            <div id="regularDiagQuestions"></div>
+            <button type="submit" class="btn btn-primary btn-lg mt-4">결과 확인</button>
+        </form>
+    </div>
+
+    <!-- 진단 결과 -->
+    <div id="page-diagResult" class="page" style="display:none;">
+        <div class="page-header"><h1>📋 진단 결과</h1></div>
+        <div id="diagResultContent"></div>
+        <div class="flex gap-2 mt-4">
+            <button class="btn btn-primary flex-1" onclick="switchTab('home')">🏠 홈으로 가기</button>
+            <button class="btn btn-secondary flex-1" onclick="showPage('healthData')">📊 건강 데이터 보기</button>
+        </div>
+    </div>
+
+    <!-- 측정 -->
+    <div id="page-measure" class="page" style="display:none;">
+        <div class="page-header"><h1>📹 눈 건강 측정</h1><button class="btn btn-secondary btn-sm" onclick="switchTab('home')">← 홈</button></div>
+        <div class="card">
+            <div class="measure-container">
+                <div class="measure-icon">👁️</div>
+                <div class="measure-status" id="measureStatus">측정을 시작하려면 버튼을 눌러주세요</div>
+                <div class="measure-timer" id="measureTimer">3:00</div>
+                <p class="text-muted text-sm mb-4">3분 동안 눈 깜빡임을 측정합니다.</p>
+                <button class="btn btn-primary btn-lg" id="startMeasure" onclick="startMeasurement()">측정 시작</button>
+            </div>
+        </div>
+        <div class="card" id="measureResult" style="display:none;">
+            <div class="card-header"><span class="card-title">📊 측정 결과</span></div>
+            <div class="card-body">
+                <div class="widget-grid">
+                    <div class="widget-card"><div class="widget-icon">😫</div><div class="widget-value" id="mFatigue">-</div><div class="widget-label">눈 피로도</div></div>
+                    <div class="widget-card"><div class="widget-icon">🏜️</div><div class="widget-value" id="mDryness">-</div><div class="widget-label">건조감</div></div>
+                    <div class="widget-card"><div class="widget-icon">🔴</div><div class="widget-value" id="mRedness">-</div><div class="widget-label">충혈도</div></div>
+                    <div class="widget-card"><div class="widget-icon">👁️</div><div class="widget-value" id="mBlink">-</div><div class="widget-label">총 깜빡임</div></div>
+                </div>
+                <div class="text-center mt-3"><span class="text-muted text-sm">분당 깜빡임: </span><span class="font-bold" id="mBpm">-</span><span class="text-muted text-sm"> 회</span></div>
+            </div>
+        </div>
+        <div class="card" style="background:var(--primary-light);"><p class="text-sm text-muted text-center">※ 본 측정은 시뮬레이션입니다.</p></div>
+    </div>
+
+    <!-- 건강 데이터 -->
+    <div id="page-healthData" class="page" style="display:none;">
+        <div class="page-header"><h1>📊 PHR 건강 데이터</h1><button class="btn btn-secondary btn-sm" onclick="switchTab('mypage')">← MY</button></div>
+        <div id="healthDataContent"></div>
+    </div>
+
+    <!-- 구독 -->
+    <div id="page-subscription" class="page" style="display:none;">
+        <div class="page-header"><h1>💎 구독</h1><button class="btn btn-secondary btn-sm" onclick="showPage('main')">← MY</button></div>
+        <div id="subscriptionContent"></div>
+    </div>
+
+    <!-- 고객센터 -->
+    <div id="page-customerCenter" class="page" style="display:none;">
+        <div class="page-header"><h1>📞 고객센터</h1><button class="btn btn-secondary btn-sm" onclick="showPage('main')">← MY</button></div>
+        <div id="customerCenterContent"></div>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
