@@ -13,7 +13,7 @@
 
     <!-- ==================== AUTH PAGES ==================== -->
 
-    <!-- Login (로그인만) -->
+    <!-- 로그인 + 회원가입 (같은 페이지) -->
     <div id="page-login" class="page auth-page">
         <div class="auth-header">
             <div class="auth-icon">👁️</div>
@@ -21,6 +21,8 @@
             <p>당신의 눈 건강을 스마트하게 관리하세요</p>
         </div>
         <div class="auth-body">
+            <!-- 로그인 -->
+            <h3 class="font-bold mb-3">🔑 로그인</h3>
             <form id="loginForm" onsubmit="return login(event)">
                 <div class="form-group">
                     <label class="form-label">아이디</label>
@@ -30,20 +32,33 @@
                     <label class="form-label">비밀번호</label>
                     <input type="password" id="loginPw" class="form-input" placeholder="비밀번호를 입력하세요" required autocomplete="current-password">
                 </div>
-                <button type="submit" class="btn btn-primary mt-4">로그인</button>
+                <button type="submit" class="btn btn-primary">로그인</button>
             </form>
-        </div>
-    </div>
 
-    <!-- 동의 창 (로그인 후 첫 진입시) -->
-    <div id="page-consent" class="page auth-page" style="display:none;">
-        <div class="auth-header">
-            <div class="auth-icon">📝</div>
-            <h1>약관 동의</h1>
-            <p>서비스 이용을 위해 약관에 동의해주세요</p>
-        </div>
-        <div class="auth-body">
-            <form id="consentForm" onsubmit="return submitConsent(event)">
+            <div class="divider"></div>
+
+            <!-- 회원가입 + 약관동의 -->
+            <h3 class="font-bold mb-3">✨ 회원가입</h3>
+            <form id="registerForm" onsubmit="return register(event)">
+                <div class="form-group">
+                    <label class="form-label">아이디 *</label>
+                    <input type="text" id="regId" class="form-input" placeholder="아이디" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">비밀번호 *</label>
+                    <input type="password" id="regPw" class="form-input" placeholder="비밀번호" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">이름</label>
+                    <input type="text" id="regName" class="form-input" placeholder="이름">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">이메일</label>
+                    <input type="email" id="regEmail" class="form-input" placeholder="이메일">
+                </div>
+
+                <div class="divider"></div>
+                <h4 class="font-bold mb-2">약관 동의</h4>
                 <div class="checkbox-group">
                     <div class="checkbox-item agree-all-item" onclick="toggleAllConsents()">
                         <input type="checkbox" id="agreeAll">
@@ -58,7 +73,7 @@
                     <div class="checkbox-item"><input type="checkbox" class="consent-cb consent-required" data-key="anonymized_data" checked><span class="checkbox-text">비식별 데이터 활용 동의</span><span class="badge-required">필수</span></div>
                     <div class="checkbox-item"><input type="checkbox" class="consent-cb" data-key="marketing_optin"><span class="checkbox-text">마케팅 정보 수신 동의</span><span class="badge-optional">선택</span></div>
                 </div>
-                <button type="submit" class="btn btn-primary mt-4">동의하고 시작하기</button>
+                <button type="submit" class="btn btn-primary mt-3">회원가입</button>
             </form>
         </div>
     </div>
